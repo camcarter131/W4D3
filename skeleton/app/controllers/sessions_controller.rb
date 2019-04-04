@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
     def create
         user = User.find_by_credentials(user_params[:user_name],user_params[:password])
         if user
-            session[:session_token] = user.reset_session_token! 
+            login_user!(user)
             redirect_to cats_url
         else
             render :new
@@ -15,7 +15,9 @@ class SessionsController < ApplicationController
     end
 
     def destroy
-    
+        current_user.reset_session_token! if current_user
+        session[:session_token] = nil
+        render :new
     end
 
     private
